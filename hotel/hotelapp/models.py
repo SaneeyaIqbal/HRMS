@@ -7,40 +7,45 @@ from django.dispatch import receiver
 #Create your models here.
 
 class Hotel(models.Model):
-    Name = models.CharField(max_length=20)
-    City = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
+    city = models.CharField(max_length=20)
 
     def __str__(self):
-        return str(self.Name)
+        return str(self.name)
+
+    def get_title(self):
+        return self.name
 
 class Manager(models.Model):
-    Name = models.CharField(max_length=20)
-    Number = models.IntegerField()
+    name = models.CharField(max_length=20)
+    number = models.IntegerField(null=True,blank = True)
 
     def __str__(self):
-        return str(self.Name)
+        return str(self.name)
 
-# class Room_Type(models.Model):
-#     Type_1 = models.CharField(max_length=20)
-#     Type_2 = models.CharField(max_length=20)
-#     Type_3 = models.CharField(max_length=20)
+    def get_name(self):
+        return str(self.name)
 
-    # def __str__(self):
-    #     return str(self.Type_1) + str(self.Type_2) + str(self.Type_3)
 
 class Room(models.Model):
-    Number = models.IntegerField()
-    Type = models.CharField(max_length=20)
-    Bed = models.IntegerField()
-    Price = models.IntegerField()
-    Availability = models.BooleanField()
+    number = models.IntegerField()
+    type = models.CharField(max_length=20)
+    bed = models.IntegerField(default=1)
+    price = models.IntegerField(default=0)
+    availability = models.BooleanField(default=True)
 
 
     def __str__(self):
-        return str(self.Type)
+        return str(self.number)
+
+    def get_room_number(self):
+        return self.number
+
+    def get_bed(self):
+        return self.bed
 
     def checked_out(self):
-        if self.Number > 0:
+        if self.number > 0:
             return True
         else:
             return False
@@ -50,110 +55,57 @@ class Room(models.Model):
 
 
 class Guest(models.Model):
-    Name = models.CharField(max_length=20)
-    Number = models.IntegerField()
-    Address = models.TextField()
+    name = models.CharField(max_length=20)
+    number = models.IntegerField()
+    address = models.TextField()
 
     def __str__(self):
-        return str(self.Name)
+        return str(self.name)
 
 class Booking(models.Model):
-    Guest_Name = models.ForeignKey(Guest, on_delete=models.CASCADE)
-    Room_Number = models.ForeignKey(Room, on_delete=models.CASCADE)
-    # Type = models.ForeignKey(Room,on_delete=models.CASCADE)
-    Guests = models.IntegerField()
+    id = models.AutoField(primary_key=True)
+    guest_name = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    room_number = models.ForeignKey(Room, on_delete=models.CASCADE)
+    guests = models.IntegerField(default=1)
     date_of_book = models.DateField()
-    date_of_cancel = models.DateField(null=True,blank=True)
-    Check_IN = models.DateField()
-    Check_OUT = models.DateField()
-    # Invoice = models.IntegerField(default=0)
-    #Available = models.IntegerField()
+    is_cancel = models.BooleanField(default=False)
+    check_in = models.DateField()
+    check_out = models.DateField()
     checked_out = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.Guest_Name)
+        return str(self.guest_name)
+
+    def get_detail(self):
+        return self.guests
 
     def bill(self):
-        if self.checked_out:
-            timedelta1 = self.Check_OUT - self.Check_IN
-            days = timedelta1.days
-            return days * self.Room_Number.Price
+        day = 0
+        invoice = self.room_number.price
+        if (self.check_out - self.check_in).days == 0:
+            day = 1
+        else:
+            day = (self.check_out - self.check_in).days
 
-
-        # if self.Check_IN is not None:
-        #     self.Invoice = self.Check_OUT - self.Check_IN
-        #     if self.Invoice.days > 0:
-        #         return self.Invoice.days * self.Type.Price
-        #     else:
-        #         return 0
+        return day * invoice
 
 @receiver(signals.post_save,sender=Booking)
 def update(sender,instance,created,**kwargs):
-    if not instance.Check_OUT:
+    if not instance.check_out:
         if created:
-            avail = instance.Check_IN.Availability
+            avail = instance.check_in.availability
             if avail > 0:
                 avail -= 1
-                room = instance.Check_IN
-                room.Availability = avail
+                room = instance.check_in
+                room.availability = avail
                 if avail <= 0:
                     room.availability = False
                 room.save()
 
         else:
-            avail = instance.Check_IN.Availability
-            room = instance.Check_IN
+            avail = instance.check_in.availability
+            room = instance.check_in
             room.availability = avail + 1
             room.save()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# class Bill(models.Model):
-#
-#     Guest_Name = models.ForeignKey(Guest, on_delete=models.CASCADE)
-#     Type = models.ForeignKey(Room, on_delete=models.CASCADE)
-#
-#
-#     def __str__(self):
-#         return str(self.Guest_Name)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# + self.Number
-# + self.Number + str(self.Address)
-# + str(self.Type) + str(self.Bed) + self.Price + self.Availability
-#  + str(self.Type2) + str(self.Type3)
-# + str(self.Type) + str(self.Guests) + self.date_of_book + self.date_of_cancel
-# + str(self.Type) + str(self.Bed) + \
-               # str(self.Price) + str(self.Availability)
