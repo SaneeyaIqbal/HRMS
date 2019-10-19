@@ -46,19 +46,15 @@ class BookingAdminForm(forms.ModelForm):
         if guests > 3:
             raise forms.ValidationError("Only three Guests can accommodate", code="invalid")
 
-        booking_obj = Booking.objects.filter(checked_out=False).filter(is_cancel=False)
+        bookingss = Booking.objects.filter(guest_name=name)
 
-        for obj in booking_obj:
-
-            if str(obj.guest_name) == str(guest_name.name) and not checked_out and not is_cancel:
+        if str(bookingss.guest_name) == str(guest_name) and not checked_out and not is_cancel:
                 raise forms.ValidationError("Guest can book only one room at time", code="invalid")
 
-            if obj.check_in > check_out:
-                raise forms.ValidationError("Invalid date", code = "invalid")
+        bookings = Booking.objects.filter(room_number=number, check_in=check_in, check_out=check_out)
 
-            if obj.room_number == number.number and not number.availability:
-                raise forms.ValidationError("Room not available", code="invalid")
-
+        if len(bookings) > 0:
+            raise forms.ValidationError("Room unavailable",code="invalid")
 
 
 
@@ -82,36 +78,15 @@ admin.site.register(Room,RoomAdmin)
 admin.site.register(Guest,GuestAdmin)
 admin.site.register(Booking,BookingAdmin)
 
-# if guests > 3:
-#     raise forms.ValidationError("Only three Guests can accommodate", code="invalid")
+# booking_obj = Booking.objects.filter(checked_out=False).filter(is_cancel=False)
 #
-# if any(Booking.objects.filter(room=number,check_out=False)):
-#     raise forms.ValidationError("Room not available",code="invalid")
-#
-# if any(guest_name == guest_name.name):
+# for obj in booking_obj:
+
+# if str(obj.guest_name) == str(guest_name.name) and not checked_out and not is_cancel:
 #     raise forms.ValidationError("Guest can book only one room at time", code="invalid")
 #
-# if any(check_in > check_out):
+# if obj.check_in > check_out:
 #     raise forms.ValidationError("Invalid date", code = "invalid")
-
-
-# if check_in > check_out:
-#     raise forms.ValidationError("Invalid date", code = "invalid")
-# return self.cleaned_data
-# #
-# # if date_of_book < check_in:
-# #     raise forms.ValidationError("",code = "invalid")
-# # return self.cleaned_data
 #
-# if guest_name == guest_name.name:
-#     raise forms.ValidationError("Guest can book only one room at time", code="invalid")
-#
-# # booking_obj = Booking.objects.filter(checked_out=False).filter(is_cancel=False)
-# # for obj in booking_obj:
-# #     value = obj
-# #     # if value.Room_Number == self.cleaned_data.get("Room_Number").avalaibit and not checked_out and not is_cancel:
-# #     #     raise forms.ValidationError("Room not available", code="invalid")
-# #     if str(value.guest_name) == str(guest_name.name) and not checked_out and not is_cancel:
-# #         raise forms.ValidationError("Guest can book only one room at time", code="invalid")
-# #     # if value.Check_OUT > Booking.Check_IN:
-# #     #     raise forms.ValidationError("Invalid date",code = "invalid")
+# if obj.room_number == number.number and not number.availability:
+#     raise forms.ValidationError("Room not available", code="invalid")

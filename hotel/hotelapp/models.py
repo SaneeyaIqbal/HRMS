@@ -67,7 +67,7 @@ class Booking(models.Model):
     guest_name = models.ForeignKey(Guest, on_delete=models.CASCADE)
     room_number = models.ForeignKey(Room, on_delete=models.CASCADE)
     guests = models.IntegerField(default=1)
-    date_of_book = models.DateField()
+    date_of_book = models.DateField(auto_now=True)
     is_cancel = models.BooleanField(default=False)
     check_in = models.DateField()
     check_out = models.DateField()
