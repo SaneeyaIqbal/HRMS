@@ -3,8 +3,10 @@ from datetime import date, timedelta, datetime
 from django.db.models import signals
 from django.db.models.signals import pre_save,post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 #Create your models here.
+
 
 class Hotel(models.Model):
     name = models.CharField(max_length=20)
@@ -15,6 +17,7 @@ class Hotel(models.Model):
 
     def get_title(self):
         return self.name
+
 
 class Manager(models.Model):
     name = models.CharField(max_length=20)
@@ -41,7 +44,6 @@ class Room(models.Model):
             return 2000
         elif self.type == 'C':
             return 3000
-
 
     def __str__(self):
         return str(self.number)
@@ -70,6 +72,7 @@ class Guest(models.Model):
     def __str__(self):
         return str(self.name)
 
+
 class Booking(models.Model):
     id = models.AutoField(primary_key=True)
     guest_name = models.ForeignKey(Guest, on_delete=models.CASCADE)
@@ -97,7 +100,6 @@ class Booking(models.Model):
     def room_price_per_night(self):
         return self.room.price()
 
-
     def guest_name_detail(self):
         return self.guest.name
 
@@ -116,6 +118,7 @@ class Booking(models.Model):
             day = (self.check_out - self.check_in).days
 
         return day * invoice
+
 
 @receiver(signals.post_save,sender=Booking)
 def update(sender,instance,created,**kwargs):

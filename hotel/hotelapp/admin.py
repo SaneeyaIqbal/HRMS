@@ -1,21 +1,25 @@
 from django.contrib import admin
 from django import forms
+from .models import *
 
-from .models import Hotel,Manager,Room,Guest,Booking
 
 class HotelAdmin(admin.ModelAdmin):
     list_display = ('name','city',)
 
+
 class ManagerAdmin(admin.ModelAdmin):
     list_display = ('name','number',)
+
 
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('number','type','bed','price','availability',)
     ordering = ('number',)
 
+
 class GuestAdmin(admin.ModelAdmin):
     list_display = ('name','number','address',)
     ordering = ('name',)
+
 
 class BookingAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -61,21 +65,14 @@ class BookingAdminForm(forms.ModelForm):
         return super(BookingAdminForm, self).save(commit=commit)
 
 
-
-
-
-
-
-
-
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('id','guest_name','guests','date_of_book','is_cancel',
-                    'check_in','check_out','bill','checked_out','room_number',)
+                    'check_in','check_out','bill','checked_out','room_number','number_of_stay_days',)
     ordering = ('id',)
     form = BookingAdminForm
 
 
-# Register your models here.
+#Register your models here.
 admin.site.register(Hotel,HotelAdmin)
 admin.site.register(Manager,ManagerAdmin)
 admin.site.register(Room,RoomAdmin)
@@ -83,37 +80,13 @@ admin.site.register(Guest,GuestAdmin)
 admin.site.register(Booking,BookingAdmin)
 
 
-# guest = self.cleaned_data.get('guest')
-# bookings = Booking.objects.all()
-# all_guests = []
-# for i in bookings:
-#     all_guests.append(i.guest)
-# if guest not in all_guests or guest in all_guests:
-#     if room.available == False:
-#         raise forms.ValidationError("Room is not available, please change the room number", code='invalid')
-# else:
-#     raise forms.ValidationError("You can't book another room.")
-
 
 
  # if str(guest_name) == str(guest_name.name):
         #     raise forms.ValidationError("Guest can book only one room at a time", code="invalid")
-
-
-
         # booking_obj = Booking.objects.filter(checked_out=False).filter(is_cancel=False)
         # for obj in booking_obj:
         #     value = obj
 
         # if str(bookings.guest_name) == str(guest_name.name):
         #     raise forms.ValidationError("Guest can book only one room at a time", code="invalid")
-
-
-# bookings = Booking.objects.all()
-# all_guests = []
-# for i in bookings:
-#     all_guests.append(i.guest_name)
-# if guest_name not in all_guests or guest_name in all_guests:
-
-#         raise forms.ValidationError("Room is not available, please change the room number", code='invalid')
-# else:
