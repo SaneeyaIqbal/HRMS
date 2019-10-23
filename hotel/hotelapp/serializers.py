@@ -2,10 +2,10 @@ from rest_framework import serializers
 from .models import Hotel, Manager, Room, Guest, Booking
 
 
-class HotelSerializer(serializers.HyperlinkedModelSerializer):
+class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hotel
-        fields = ('id', 'url', 'name', 'city', )
+        fields = ('id', 'name', 'city', )
 
 
 class ManagerSerializer(serializers.ModelSerializer):
