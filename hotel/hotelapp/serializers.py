@@ -17,7 +17,7 @@ class ManagerSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ('number', 'type', 'bed', 'price', 'avalability', )
+        fields = ('number', 'type', 'bed', 'price', 'availability', )
 
 
 class GuestSerializer(serializers.ModelSerializer):
@@ -25,8 +25,21 @@ class GuestSerializer(serializers.ModelSerializer):
         model = Guest
         fields = ('name', 'number', 'address', )
 
+class GuestNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guest
+        fields = ('name', )
+
+class RoomTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ('type', )
+
 
 class BookingSerializer(serializers.ModelSerializer):
+    guest_name = GuestNameSerializer()
+    room_number = RoomTypeSerializer()
+
     class Meta:
         model = Booking
         fields = ('id', 'guest_name', 'room_number', 'number_of_stay_days', 'guests',
